@@ -1,0 +1,7 @@
+{
+  "name": "VoleyAplicacion",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
