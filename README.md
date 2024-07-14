@@ -89,6 +89,10 @@ Dentro de la Voley Estadísticas para configurar la Autenticación. Habilitamos 
 Para ver los cambios realizados en tiempo real, podemos correr el comando: 
 > ionic serve
 
+## Cambiar los estilos de colores en la app
+
+Podemos utilizar esto de [guía](https://petercoding.com/ionic/2019/04/25/theming-your-app-in-ionic4/#adding-your-own-custom-colors).
+
 ## Integrar gráficos en la app
 
 https://apexcharts.com/docs/update-charts-from-json-api-ajax/

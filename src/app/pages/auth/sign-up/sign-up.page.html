@@ -12,9 +12,9 @@
             <div class="validators" *ngIf="form.controls.name.errors && form.controls.name.touched">
               <div *ngIf="form.controls.name.errors?.['required']"> El nombre es requerido. </div>
               <div *ngIf="form.controls.name.errors?.['minLength']"> El nombre debe tener al menos 4 caracteres. </div>
-          </div>
+            </div>
 
-           <!-- =============== EMAIL ===============--> 
+            <!-- =============== EMAIL ===============--> 
             <!-- Esto es para pasarle al custim-inout los iconos-->
             <app-custom-input autocomplete="email" icon="mail-outline" [control]="form.controls.email" type="email" label="Correo"></app-custom-input>
 

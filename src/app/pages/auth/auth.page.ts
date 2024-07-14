@@ -40,7 +40,7 @@ export class AuthPage implements OnInit {
         this.utilsSvc.presentToast({
           message: error.message,
           duration: 2500,
-          color: 'warning',
+          color: 'tertiary',
           position: 'middle',
           icon: 'alert-circle-outline'
         })
@@ -81,7 +81,7 @@ export class AuthPage implements OnInit {
         this.utilsSvc.presentToast({
           message: error.message,
           duration: 2500,
-          color: 'warning',
+          color: 'tertiary',
           position: "middle",
           icon: 'alert-circle-outline'
         })

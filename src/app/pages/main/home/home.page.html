@@ -1,1 +1,11 @@
-<app-header backButton="/auth" title="Home"></app-header>
+<app-header backButton="/auth" title="Jugadoras"></app-header>
+
+<ion-content>
+    <!-- ============== Crear una jugadora -->
+     <!-- Es un pop up en pantalla completa o modal que viene del utils -->
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button color="buttonColors" (click)="addUpdatePlayer()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>
