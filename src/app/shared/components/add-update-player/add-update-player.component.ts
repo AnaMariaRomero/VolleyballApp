@@ -58,9 +58,10 @@ export class AddUpdatePlayerComponent  implements OnInit {
       delete this.form.value.id;
 
       // ====== Subir el documento ========
+      console.log("Vamos a ver categioras: ", this.form.value.categories);
       this.firebaseSvc.addDocument(path, this.form.value).then(async res => {
 
-        this.utilsSvc.dismissModal({  success: true});
+        this.utilsSvc.dismissModal({ success: true });
 
         this.utilsSvc.presentToast({
           message: 'Jugadora creada exitosamente. ',
@@ -68,7 +69,7 @@ export class AddUpdatePlayerComponent  implements OnInit {
           color: 'tertiary',
           position: "middle",
           icon: 'checkmark-circle-outline'
-        })
+        });
         
       }).catch(error => {
         console.log(error);
@@ -80,12 +81,15 @@ export class AddUpdatePlayerComponent  implements OnInit {
           position: "middle",
           icon: 'alert-circle-outline'
         })
-      })
+      }).finally(() => {
+        loading.dismiss();
+       })
     }
 }
 
   // Con esto puedo obtener los datos para las categorías de las jugadoras
   handleChange(evento) {
     console.log('Categorías seleccionadas:', JSON.stringify(evento.target.value[0]));
+    this.form.value.categories = evento.target.value;
   }
 }

@@ -20,7 +20,6 @@ export class AuthPage implements OnInit {
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
 
-
   ngOnInit() {
   }
 
