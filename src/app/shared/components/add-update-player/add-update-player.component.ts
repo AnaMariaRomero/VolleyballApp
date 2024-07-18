@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { User } from 'src/app/models/user.model';
+import { Category } from 'src/app/models/category.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 
@@ -11,42 +12,21 @@ import { UtilsService } from 'src/app/services/utils.service';
 })
 export class AddUpdatePlayerComponent  implements OnInit {
 
-  categories = [
-    {
-      id: 1,
-      name: 'sub 16'
-    },
-    {
-      id: 2,
-      name: 'sub 18'
-    },
-    {
-      id: 3,
-      name: 'Sub 21'
-    },
-    {
-      id: 4,
-      name: 'Sub 23'
-    },
-    {
-      id: 4,
-      name: 'Mayores'
-    },
-  ];
-
   form = new FormGroup({
     id: new FormControl(''),
     name: new FormControl('',[Validators.required, Validators.minLength(4)]),
-    categories: new FormControl([])
+    categories: new FormControl('',[])
   })
   
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
 
   user = {} as User;
+  categories = {} as Category [];
 
   ngOnInit() {
     this.user = this.utilsSvc.getFromLocalStorage('user');
+    this.getParams();
   }
 
   async submit() {
@@ -85,11 +65,33 @@ export class AddUpdatePlayerComponent  implements OnInit {
         loading.dismiss();
        })
     }
-}
+  }
+
+  // Obtenemos los parametros/categorias/datos
+  async getParams() {
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
+
+    this.firebaseSvc.getParams().then( res => {
+
+      this.categories = res;     
+        
+    }).catch(error => {
+       console.log(error);
+
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        color: 'tertiary',
+        position: "middle",
+        icon: 'alert-circle-outline'
+      })
+
+     }).finally(() => { loading.dismiss(); });
+  }
 
   // Con esto puedo obtener los datos para las categorías de las jugadoras
   handleChange(evento) {
-    console.log('Categorías seleccionadas:', JSON.stringify(evento.target.value[0]));
     this.form.value.categories = evento.target.value;
   }
 }
