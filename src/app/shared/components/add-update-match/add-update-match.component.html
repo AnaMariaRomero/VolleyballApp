@@ -1,0 +1,31 @@
+<app-header [isModal]="true" title="Agregar partido"></app-header>
+<ion-content>
+  <form [formGroup]="form" class="ion-padding ion-text-center" (ngSubmit)="submit()" (keypress.enter)="submit">
+            
+    <!-- =============== Equipo a enfrentar ===============--> 
+    <!-- Esto es para pasarle al custim-inout los iconos-->
+    <app-custom-input autocomplete="team" [control]="form.controls.team" type="text" label="Equipo contrario"></app-custom-input>
+
+    <div class="validators" *ngIf="form.controls.team.errors && form.controls.team.touched">
+      <div *ngIf="form.controls.team.errors?.['required']"> El equipo contrario es requerido. </div>
+    </div>
+
+    <!-- =============== FECHA ===============--> 
+    <app-custom-input autocomplete="date" [control]="form.controls.date" type="text" label="Fecha"></app-custom-input>
+
+    <!-- =============== PARTIDOS ===============--> 
+    
+    <ion-list>
+      <ion-item>
+        <ion-select aria-label="player" placeholder="Seleccionar las jugadoras para el partido" [multiple]="true" (ionChange)="handleChange($event)">
+          <ion-select-option *ngFor="let player of players" [value]="player">{{ player.name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+
+  <ion-button class="ion-margin" node="ios" type="submit" [disabled]="form.invalid"> Agregar 
+    <ion-icon slot="end" name="happy-outline"></ion-icon>   
+  </ion-button>
+  </form>
+</ion-content>

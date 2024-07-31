@@ -143,3 +143,28 @@ ion-button {
 .ion-color-borderColors{
     --ion-color-base: #26076d;
 }
+
+ion-card {
+  
+    .img-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        border-radius: 10px;
+        width:150px;
+         height:150px;
+      }
+    } 
+    
+    
+}   
+
+ion-card-header {
+  .hydrated {
+    display: flex;
+      flex-direction: wrap;
+      margin-left: 10px;
+  }
+      
+}

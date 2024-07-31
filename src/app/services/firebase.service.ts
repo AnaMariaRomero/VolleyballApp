@@ -77,7 +77,7 @@ export class FirebaseService {
         })
     }
 
-    async getParams(): Promise<Category[]> {
+    async getParams(): Promise<Category[]> { //parametros/categorías/datos
         //primero traemos la coleecion
         const paramsCollectionRef = collection(getFirestore(), 'parametros'); 
         //luego traemos la referencia al documento con la referencia parametro
@@ -109,12 +109,23 @@ export class FirebaseService {
 
     getJugadoras() {
         const userUid = JSON.parse(localStorage.getItem('user')).uid;
-        const usersCollectionRef = collection(getFirestore(), 'users'); // Only 'users' collection path
-      
-        const playersQuery = query(collection(usersCollectionRef, userUid, 'players'), {} as any); // Access players collection within user document
-      
+        // coleccion unica para el usuario
+        const usersCollectionRef = collection(getFirestore(), 'users'); 
+        // Acceder a las coleccion de jugadoras con el documento del user
+        const playersQuery = query(collection(usersCollectionRef, userUid, 'players'), {} as any); 
         const jugadorasData = collectionData(playersQuery, { idField: 'id' });
       
         return jugadorasData;
-      }
+    }
+
+    getMatches(){
+        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+        // coleccion unica para el usuario
+        const usersCollectionRef = collection(getFirestore(), 'users'); 
+        // Acceder a las coleccion de partidos con el documento del user
+        const matchesQuery = query(collection(usersCollectionRef, userUid, 'matches'), {} as any);
+        const matchesData = collectionData(matchesQuery, { idField: 'id' });
+    
+        return matchesData;
+    }
 }

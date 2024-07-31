@@ -4,5 +4,5 @@ export interface Player {
     id: string,
     name: string,
     imagen: string,
-    caterories: Category[]
+    categories: Category[]
 }

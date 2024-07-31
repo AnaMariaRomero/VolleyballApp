@@ -1,0 +1,33 @@
+<app-header backButton="/auth" title="Jugadoras"></app-header>
+
+<ion-content>
+
+    <!-- Acá vamos a poner el listado de jugadoras -->
+    <ion-list *ngFor="let player of players">
+        <ion-card>
+          <div class="img-wrapper">
+            <img alt="Alguna imagen" src="assets/icon/logoPequeno.png" />
+          </div>
+            
+            <ion-card-header>
+              <ion-card-title>{{ player.name }}</ion-card-title>
+              <ion-card-subtitle>Categorías: <p *ngFor="let category of player.categories"> {{ category.name }} &nbsp;</p></ion-card-subtitle>
+              
+            </ion-card-header>
+          
+            <ion-card-content>
+              <ion-button >
+                Detalles de la jugadora
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+    </ion-list>
+
+    <!-- ============== Crear una jugadora -->
+     <!-- Es un pop up en pantalla completa o modal que viene del utils -->
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button color="buttonColors" (click)="addUpdatePlayer()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>

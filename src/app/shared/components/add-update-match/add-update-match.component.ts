@@ -1,37 +1,38 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { User } from 'src/app/models/user.model';
-import { Category } from 'src/app/models/category.model';
+import { User } from 'firebase/auth';
+import { Player } from 'src/app/models/player.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
-  selector: 'app-add-update-player',
-  templateUrl: './add-update-player.component.html',
-  styleUrls: ['./add-update-player.component.scss'],
+  selector: 'app-add-update-match',
+  templateUrl: './add-update-match.component.html',
+  styleUrls: ['./add-update-match.component.scss'],
 })
-export class AddUpdatePlayerComponent  implements OnInit {
+export class AddUpdateMatchComponent  implements OnInit {
 
   form = new FormGroup({
     id: new FormControl(''),
-    name: new FormControl('',[Validators.required, Validators.minLength(4)]),
-    categories: new FormControl('',[])
+    team: new FormControl('',[Validators.required, Validators.minLength(4)]),
+    date: new FormControl(''),
+    players: new FormControl([])
   })
   
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
 
   user = {} as User;
-  categories = {} as Category [];
+  players = {} as Player [];
 
   ngOnInit() {
     this.user = this.utilsSvc.getFromLocalStorage('user');
-    this.getParams();
+    this.getPlayers();
   }
 
   async submit() {
     if(this.form.valid){
-      let path = `users/${this.user.uid}/players`
+      let path = `users/${this.user.uid}/matches`
       const loading = await this.utilsSvc.loading();
       await loading.present();
 
@@ -43,7 +44,7 @@ export class AddUpdatePlayerComponent  implements OnInit {
         this.utilsSvc.dismissModal({ success: true });
 
         this.utilsSvc.presentToast({
-          message: 'Jugadora creada exitosamente. ',
+          message: 'Partido creado exitosamente. ',
           duration: 1500,
           color: 'tertiary',
           position: "middle",
@@ -66,31 +67,19 @@ export class AddUpdatePlayerComponent  implements OnInit {
     }
   }
 
-  // Obtenemos los parametros/categorias/datos
-  async getParams() {
-    const loading = await this.utilsSvc.loading();
-    await loading.present();
+  // Obtenemos los user/id/players/id/datos -> hasta id quiero
+  async getPlayers() {
 
-    this.firebaseSvc.getParams().then( res => {
-
-      this.categories = res;     
-        
-    }).catch(error => {
-       console.log(error);
-
-      this.utilsSvc.presentToast({
-        message: error.message,
-        duration: 2500,
-        color: 'tertiary',
-        position: "middle",
-        icon: 'alert-circle-outline'
-      })
-
-     }).finally(() => { loading.dismiss(); });
+    const sub = this.firebaseSvc.getJugadoras().subscribe({
+      next: (res: any) => {
+        this.players = res;
+        sub.unsubscribe();
+      }
+    });
   }
 
   // Con esto puedo obtener los datos para las categorías de las jugadoras
   handleChange(evento) {
-    this.form.value.categories = evento.target.value;
+    this.form.value.players = evento.target.value;
   }
 }

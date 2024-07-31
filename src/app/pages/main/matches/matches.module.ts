@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { HomePageRoutingModule } from './home-routing.module';
-import { HomePage } from './home.page';
+import { MatchesPageRoutingModule } from './matches-routing.module';
+import { MatchesPage } from './matches.page';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
@@ -11,9 +11,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    HomePageRoutingModule, 
-    SharedModule 
+    MatchesPageRoutingModule, 
+    SharedModule
   ],
-  declarations: [HomePage]
+  declarations: [MatchesPage]
 })
-export class HomePageModule {}
+export class MatchesPageModule {}
