@@ -1,13 +1,29 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>match</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header backButton="/auth" title="Partido"></app-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">match</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+    <ion-text color="secundary">
+        <h1>SETS</h1>
+    </ion-text>
+    <!-- Acá vamos a poner el listado de sets -->
+    <ion-grid [fixed]="true">
+        <ion-row>
+            <ion-col *ngFor="let set of [1,2,3,4,5]">
+                <ion-button (click)="changeSet(set)" color="buttonColors">
+                    {{set}}
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <!-- Acá vamos a poner el listado de jugadoras -->
+    <ion-card *ngIf="isOpen">
+        <ion-card-header> JUGADORAS </ion-card-header>
+        <ion-card-subtitle>Marque las jugadoras para el set</ion-card-subtitle>
+        <ion-grid [fixed]="true">
+            <ion-row>
+                <ion-col *ngFor="let player of players" (click)="selectedPlayer(player.id)"><ion-chip>{{player.numberPlayer}}</ion-chip></ion-col>
+            </ion-row>
+        </ion-grid>
+
+        <ion-button (click)="addUpdateSet()"> Comenzar </ion-button>
+    </ion-card>
 </ion-content>

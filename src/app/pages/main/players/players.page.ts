@@ -23,9 +23,8 @@ export class PlayersPage implements OnInit {
   }
 
   getPlayers(){
-    const sub = this.firebaseSvc.getJugadoras().subscribe({
+    const sub = this.firebaseSvc.getPlayers().subscribe({
       next: (res: any) => {
-        console.log(res);
         this.players = res;
         sub.unsubscribe();
       }

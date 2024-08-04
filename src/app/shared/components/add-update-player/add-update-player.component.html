@@ -1,7 +1,7 @@
 <app-header [isModal]="true" title="Agregar jugadora"></app-header>
 <ion-content>
 
-    <form [formGroup]="form" class="ion-padding ion-text-center" (ngSubmit)="submit()" (keypress.enter)="submit">
+    <form [formGroup]="form" class="ion-padding ion-text-center" (ngSubmit)="submit()" >
            
       <!-- =============== NAME ===============--> 
       <!-- Esto es para pasarle al custim-inout los iconos-->
@@ -11,6 +11,10 @@
         <div *ngIf="form.controls.name.errors?.['required']"> El nombre es requerido. </div>
         <div *ngIf="form.controls.name.errors?.['minLength']"> El nombre debe tener al menos 4 caracteres. </div>
       </div>
+
+      
+      <!-- ================= NUMERO =======================-->
+      <app-custom-input autocomplete="numberPlayer" [control]="form.controls.numberPlayer" type="text" label="Número"></app-custom-input>
 
       <!-- =============== CATEGORIA ===============--> 
 

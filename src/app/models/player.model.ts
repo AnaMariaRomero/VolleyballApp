@@ -1,8 +1,10 @@
 import { Category } from "./category.model";
+import { Statistics } from "./statistics.model";
 
 export interface Player {
     id: string,
+    numberPlayer: number,
     name: string,
-    imagen: string,
-    categories: Category[]
+    categories: Category[],
+    staticsPlayer: Statistics[]
 }

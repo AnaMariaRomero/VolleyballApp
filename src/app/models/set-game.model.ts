@@ -2,8 +2,8 @@ import { Player } from "./player.model";
 
 export interface SetGame {
     id: string,
-    number: string,
+    number: number,
     matchId: string,
     players: Player[],
-    points: string
+    points: number
 }

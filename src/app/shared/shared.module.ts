@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddUpdatePlayerComponent } from './components/add-update-player/add-update-player.component';
 import { AddUpdateMatchComponent } from './components/add-update-match/add-update-match.component';
+import { AddUpdateSetComponent } from './components/add-update-set/add-update-set.component';
 
 
 
@@ -17,6 +18,7 @@ import { AddUpdateMatchComponent } from './components/add-update-match/add-updat
     LogoComponent,
     AddUpdatePlayerComponent,
     AddUpdateMatchComponent,
+    AddUpdateSetComponent,
   ],
   exports: [
     HeaderComponent,
@@ -24,7 +26,8 @@ import { AddUpdateMatchComponent } from './components/add-update-match/add-updat
     LogoComponent,
     ReactiveFormsModule,
     AddUpdatePlayerComponent,
-    AddUpdateMatchComponent
+    AddUpdateMatchComponent,
+    AddUpdateSetComponent,
   ],
   imports: [
     CommonModule,

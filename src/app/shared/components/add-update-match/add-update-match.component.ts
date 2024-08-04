@@ -16,7 +16,7 @@ export class AddUpdateMatchComponent  implements OnInit {
     id: new FormControl(''),
     team: new FormControl('',[Validators.required, Validators.minLength(4)]),
     date: new FormControl(''),
-    players: new FormControl([])
+    playersId: new FormControl([])
   })
   
   firebaseSvc = inject(FirebaseService);
@@ -70,7 +70,7 @@ export class AddUpdateMatchComponent  implements OnInit {
   // Obtenemos los user/id/players/id/datos -> hasta id quiero
   async getPlayers() {
 
-    const sub = this.firebaseSvc.getJugadoras().subscribe({
+    const sub = this.firebaseSvc.getPlayers().subscribe({
       next: (res: any) => {
         this.players = res;
         sub.unsubscribe();
@@ -78,8 +78,12 @@ export class AddUpdateMatchComponent  implements OnInit {
     });
   }
 
-  // Con esto puedo obtener los datos para las categorías de las jugadoras
+  // Con esto puedo obtener el id de las jugadoras
   handleChange(evento) {
-    this.form.value.players = evento.target.value;
+    const arrayIds: String[] = [];
+    for (let i = 0; i < evento.target.value.length; i++) {
+      arrayIds[i] = evento.target.value[i].id;
+    }
+    this.form.value.playersId = arrayIds;
   }
 }
