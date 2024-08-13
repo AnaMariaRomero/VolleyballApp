@@ -3,13 +3,16 @@ import { AngularFireAuth } from '@angular/fire/compat/auth'
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { User } from '../models/user.model';
 import { AngularFirestore } from '@angular/fire/compat/firestore'
-import { doc, getFirestore, setDoc, getDoc, addDoc, collection, collectionData, onSnapshot, getDocs, where, query } from  '@angular/fire/firestore';
+import { doc, getFirestore, setDoc, getDoc, getDocs, addDoc, collection, collectionData, query, DocumentData, updateDoc } from  '@angular/fire/firestore';
 import { UtilsService } from './utils.service';
 import { getStorage, uploadString, ref, getDownloadURL } from 'firebase/storage'
 import { Category } from '../models/category.model';
 import { SetGame } from '../models/set-game.model';
 import { Player } from '../models/player.model';
-
+import { Statistics } from '../models/statistics.model';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { Position } from '../models/position.model';
+import { Observable, firstValueFrom, map } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -19,6 +22,7 @@ export class FirebaseService {
     auth = inject(AngularFireAuth);
     firestores = inject(AngularFirestore);
     utilsSvc = inject(UtilsService);
+    storage = inject(AngularFireStorage);
 
     // =================== Autenticación ==================================
     getAuth(){
@@ -59,11 +63,22 @@ export class FirebaseService {
         return setDoc(doc(getFirestore(), path), data);
     }
 
+     // ======== Updetear un documento ================
+     updateDocument(path: string, data: any){
+        return updateDoc(doc(getFirestore(), path), data);
+    }
+
     // ============ Obtener un documento ==============
     async getDocument(path: string) { 
         //sacamos la informacion del documento directamente con .data()
         return (await getDoc(doc(getFirestore(), path))).data();
     }
+
+    getCollectionData(path: string, collectionQuery?: any) {
+        const ref = collection(getFirestore(), path);
+        return collectionData(ref, { idField: 'id' });
+    }
+
     // ============ Agregar un documento ==============
     // se le pasa por parametro el path de lo que queremos agregar, en este caso es users
     addDocument(path:string, data: any){
@@ -78,34 +93,70 @@ export class FirebaseService {
         })
     }
 
-    async getParams(): Promise<Category[]> { //parametros/categorías/datos
+    // Tomar seleccionar una imagen
+    async uploadImage(path: string, data_url: string){
+        return uploadString(ref(getStorage(), path), data_url, 'data_url').then(() => {
+            return getDownloadURL(ref(getStorage(), path))
+        })
+    }
+
+    async getParams(tipoParametro: string): Promise<Category[]> { //parametros/categorías/datos
         //primero traemos la coleecion
         const paramsCollectionRef = collection(getFirestore(), 'parametros'); 
         //luego traemos la referencia al documento con la referencia parametro
-        const categoriesDocRef = doc(paramsCollectionRef, 'categorías');
-        // luego traemos la informacion del documento
-        const categoriesDoc = await getDoc(categoriesDocRef);
-      
-        if (categoriesDoc.exists()) {
-            // luego sacamos la info y la castemos al modelo de categoría
-            const data = categoriesDoc.data();
-            const categories: Category[] = [];
-      
+        let promise: any;
+        if (tipoParametro == 'categorías'){
+            const categoriesDocRef = doc(paramsCollectionRef, 'categorías');
+            // luego traemos la informacion del documento
+            const categoriesDoc = await getDoc(categoriesDocRef);
+        
+            if (categoriesDoc.exists()) {
+                // luego sacamos la info y la castemos al modelo de categoría
+                const data = categoriesDoc.data();
+                const categories: Category[] = [];
+        
 
-            for (const categoryId in data) {
-                const categoryName = data[categoryId];
-                const category: Category = {
-                    id: categoryId, // casteamos id
-                    name: categoryName // casteamos name
-                };
-                categories.push(category);
+                for (const categoryId in data) {
+                    const categoryName = data[categoryId];
+                    const category: Category = {
+                        id: categoryId, // casteamos id
+                        name: categoryName // casteamos name
+                    };
+                    categories.push(category);
+                }
+        
+                promise = categories;
+            } else {
+            console.error('No se encontraron categorías');
+            return [];
             }
-      
-          return categories;
         } else {
-          console.error('No se encontraron categorías');
-          return [];
+            const positionsDocRef = doc(paramsCollectionRef, 'posiciones');
+            // luego traemos la informacion del documento
+            const positionsDoc = await getDoc(positionsDocRef);
+        
+            if (positionsDoc.exists()) {
+                // luego sacamos la info y la castemos al modelo de posicion
+                const data = positionsDoc.data();
+                const positions: Position[] = [];
+        
+
+                for (const positionId in data) {
+                    const positionName = data[positionId];
+                    const position: Position = {
+                        id: positionId, // casteamos id
+                        name: positionName // casteamos name
+                    };
+                    positions.push(position);
+                }
+        
+                promise = positions;
+            } else {
+            console.error('No se encontraron categorías');
+            return [];
+            }
         }
+        return promise;
     }
 
     getPlayers() {
@@ -153,13 +204,89 @@ export class FirebaseService {
     }
 
     getMatch(matchId:string){
-        //otra forma de obtener datos con el getDocument()
         const userUid = JSON.parse(localStorage.getItem('user')).uid;
+        //otra forma de obtener datos con el getDocument()
         const path = `users/${userUid}/matches/${matchId}`;
         const datos = this.getDocument(path);
         // con este tengo que hacer un then porque es un Promise
         return datos;
     }
+
+    async getSetsGameByMatchId(matchId: string): Promise<Observable<SetGame[]>> {
+        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+        const path = `users/${userUid}/matches/${matchId}/sets`;
+        const setsCollectionRef = collection(getFirestore(), path);
+        const setsSnapshot = await getDocs(setsCollectionRef);
+        
+        return await this.getCollectionData(path).pipe(
+            map((documents: DocumentData[]) =>
+            documents.map((doc: DocumentData) => ({
+                id: doc['id'], // Acceder al ID como parte de los datos
+                number: doc['number'],
+                matchId: doc['matchId'],
+                players: doc['players'],
+                pointsFavor: doc['pointsFavor'],
+                pointsAgainst: doc['pointsAgainst'],
+                setFinish: doc['setFinish']
+            }) as SetGame)
+            )
+        );
+      }
+      
+    updateSetGame(setGame:SetGame){
+        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+        const path =  `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}`;
+
+        this.updateDocument(path, setGame);
+    }
+
+    async addArraySetsGameForMatch(matchId: string) {
+        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+        const path = `users/${userUid}/matches/${matchId}/sets`;
+    
+        // Buscar si ya existen sets en la base de datos
+    const existingSets = this.getCollectionData(path);
+    const sets = await firstValueFrom(existingSets);
+    
+        if (sets && sets.length > 0) {
+            console.log("Sets ya existentes: ", sets);
+            return sets;
+        }
+    
+        // Si no hay sets, crearlos
+        const newSets = [
+            { number: 1, matchId: matchId, players: [], pointsFavor: 0, pointsAgainst: 0, setFinish: false },
+            { number: 2, matchId: matchId, players: [], pointsFavor: 0, pointsAgainst: 0, setFinish: false },
+            { number: 3, matchId: matchId, players: [], pointsFavor: 0, pointsAgainst: 0, setFinish: false },
+            { number: 4, matchId: matchId, players: [], pointsFavor: 0, pointsAgainst: 0, setFinish: false },
+            { number: 5, matchId: matchId, players: [], pointsFavor: 0, pointsAgainst: 0, setFinish: false }
+        ];
+    
+        const promises = newSets.map(setData => this.addDocument(path, setData));
+        await Promise.all(promises);
+        
+        return newSets;
+    }
+     
+    finishSet(setGame:SetGame,statisticsPlayersArray: Statistics[]) {
+        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+        const path =  `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}/statistics`;
+
+        statisticsPlayersArray.forEach(setData => {
+            this.addDocument(path, setData)
+            .then(() => {
+                console.log(`Statistics añadido: `, setData.setId);
+            })
+            .catch(error => {
+                console.error('Error añadiendo el statistics: ', error);
+            });
+        });
+
+        // updetear el set: 
+        this.updateSetGame(setGame);
+
+        const datos = this.getDocument(path);
+      }
 }
 
 /**************************************************************

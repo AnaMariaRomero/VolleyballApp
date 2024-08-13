@@ -160,4 +160,6 @@ La idea es que con el código anterior y con la integración de los datos obteni
 ![Gráfico Radar](volley-app/src/assets/idea-de-grafico/idea-grafico.png)
 
 
+## Integrar imagenes
 
+![Capacitor Camera](https://ionicframework.com/docs/native/camera )

@@ -16,7 +16,8 @@ export class AddUpdateMatchComponent  implements OnInit {
     id: new FormControl(''),
     team: new FormControl('',[Validators.required, Validators.minLength(4)]),
     date: new FormControl(''),
-    playersId: new FormControl([])
+    playersId: new FormControl([]),
+    matchFinish: new FormControl(false)
   })
   
   firebaseSvc = inject(FirebaseService);
@@ -39,7 +40,7 @@ export class AddUpdateMatchComponent  implements OnInit {
       delete this.form.value.id;
 
       // ====== Subir el documento ========
-      this.firebaseSvc.addDocument(path, this.form.value).then(async res => {
+      this.firebaseSvc.addDocument(path, this.form.value).then(async () => {
 
         this.utilsSvc.dismissModal({ success: true });
 

@@ -1,0 +1,7 @@
+.acomodarBotones{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Alinea al inicio del contenedor */
+    align-items: center; /* Centra horizontalmente */
+    padding-top: 20px; /* Espacio opcional desde la parte superior */
+}

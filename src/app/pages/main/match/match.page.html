@@ -15,7 +15,7 @@
         </ion-row>
     </ion-grid>
     <!-- Acá vamos a poner el listado de jugadoras -->
-    <ion-card *ngIf="isOpen">
+    <ion-card *ngIf="isOpen && !finSet">
         <ion-card-header> JUGADORAS </ion-card-header>
         <ion-card-subtitle>Marque las jugadoras para el set</ion-card-subtitle>
         <ion-grid [fixed]="true">
@@ -23,7 +23,15 @@
                 <ion-col *ngFor="let player of players" (click)="selectedPlayer(player.id)"><ion-chip>{{player.numberPlayer}}</ion-chip></ion-col>
             </ion-row>
         </ion-grid>
+        <div class="acomodarBotones">
+            <ion-button color="buttonColors" (click)="addUpdateSet()"> Comenzar </ion-button>
+            <ion-button color="buttonEndColor" (click)="terminarPartido()"> Terminar Partido </ion-button>
+        </div>
+    
+    </ion-card >
 
-        <ion-button (click)="addUpdateSet()"> Comenzar </ion-button>
+    <ion-card *ngIf="finSet">
+        Set terminado.
+        En otra version se mostrará la estadística.
     </ion-card>
 </ion-content>

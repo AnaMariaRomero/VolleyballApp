@@ -5,14 +5,17 @@
     <!-- Acá vamos a poner el listado de jugadoras -->
     <ion-list *ngFor="let player of players">
         <ion-card>
-          <div class="img-wrapper">
+          <div *ngIf="player.image" class="img-wrapper">
+            <img alt="Alguna imagen" [src]="player.image" />
+          </div>
+          <div *ngIf="!player.image" class="img-wrapper">
             <img alt="Alguna imagen" src="assets/icon/logoPequeno.png" />
           </div>
             
             <ion-card-header>
               <ion-card-title>{{ player.name }}</ion-card-title>
               <ion-card-subtitle>Categorías: <p *ngFor="let category of player.categories"> {{ category.name }} &nbsp;</p></ion-card-subtitle>
-              
+              <ion-card-subtitle>Posiciones: <p *ngFor="let position of player.positions"> {{ position.name }} &nbsp;</p></ion-card-subtitle>
             </ion-card-header>
           
             <ion-card-content>

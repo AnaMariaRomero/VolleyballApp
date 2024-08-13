@@ -6,7 +6,8 @@ export interface Match {
     team: string,
     date: string,
     playersId: string[],
-    sets: SetGame[]
+    setsId: string[],
+    matchFinish: boolean
 }
 
 

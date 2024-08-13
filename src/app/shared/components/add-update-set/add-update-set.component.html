@@ -1,27 +1,69 @@
 <app-header [isModal]="true" title="Cargar Set"></app-header>
 <ion-content>
   <ion-card>
-    <ion-card-header>
-      <ion-card-title> Set número: {{numberSet}}</ion-card-title>
-      <ion-card-subtitle>Cantidad de puntos: {{ points }}</ion-card-subtitle>
-      <ion-button color="buttonColors" (click)="increment()"><ion-icon name="add"></ion-icon></ion-button>
-    </ion-card-header>
     
-  
-
-    <form [formGroup]="form" class="ion-padding ion-text-center"  >
+      <ion-card-header>
+        <ion-card-title> Set número: {{numberSet}}</ion-card-title>
+        <div class="acomodarBotones">
+          <ion-card-subtitle>Puntos a favor: {{ pointsFavor }} </ion-card-subtitle>
+          <span></span>
+          <ion-button color="buttonColors" (click)="increment()"><ion-icon name="add"></ion-icon></ion-button>
+        </div>
+        <div class="acomodarBotones">
+          <ion-card-subtitle>Puntos en contra: {{ pointsAgainst }}</ion-card-subtitle>
+          <ion-button color="buttonColors" (click)="discount()"><ion-icon name="add"></ion-icon></ion-button>
+        </div>
+      </ion-card-header>
+    
       <ion-grid [fixed]="true">
         <ion-row>
-            <ion-col *ngFor="let player of players" (click)="selectedPlayer(player)"><ion-chip>{{player.numberPlayer}}</ion-chip></ion-col>
+            <ion-col *ngFor="let player of players" (click)="getSelectedPlayer(player)"><ion-chip>{{player.numberPlayer}}</ion-chip></ion-col>
         </ion-row>
       </ion-grid>
-      <ion-button class="ion-margin" node="ios" type="submit" [disabled]="form.invalid"> Agregar 
-        <ion-icon slot="end" name="happy-outline"></ion-icon>   
-      </ion-button>
-    </form>
-    <ion-button (click)="setFinalSet()" expand="block" fill="clear" shape="round">
-      Terminar Set
-    </ion-button>
-    </ion-card>
+
+      <ion-card *ngIf="jugadoraSeleccionada">
+        <ion-card-header>
+          <ion-card-title>Jugadora: {{ selectedPlayer.name }}</ion-card-title>
+          <ion-card-subtitle>Puntos positivos y negativos para agregarle a la jugadora </ion-card-subtitle>
+        </ion-card-header>
+          <ion-list>
+            <ion-item>
+              <ion-label>Armado</ion-label>
+              <ion-button color="buttonColors" (click)="agregarPunto(true, 'armado')" ><ion-icon name="add"></ion-icon></ion-button>
+              <ion-button color="buttonColors" (click)="agregarPunto(false, 'armado')" ><ion-icon name="remove-outline"></ion-icon></ion-button>
+            </ion-item>
+            <ion-item>
+              <ion-label>Saque</ion-label>
+              <ion-button color="buttonColors" (click)="agregarPunto(true, 'saque')" ><ion-icon name="add"></ion-icon></ion-button>
+              <ion-button color="buttonColors" (click)="agregarPunto(false, 'saque')" ><ion-icon name="remove-outline"></ion-icon></ion-button>
+            </ion-item>
+            <ion-item>
+              <ion-label>Defensa</ion-label>
+              <ion-button color="buttonColors" (click)="agregarPunto(true, 'defensa')" ><ion-icon name="add"></ion-icon></ion-button>
+              <ion-button color="buttonColors" (click)="agregarPunto(false, 'defensa')" ><ion-icon name="remove-outline"></ion-icon></ion-button>
+            </ion-item>
+            <ion-item>
+              <ion-label>Recepción</ion-label>
+              <ion-button color="buttonColors" (click)="agregarPunto(true, 'recepcion')" ><ion-icon name="add"></ion-icon></ion-button>
+              <ion-button color="buttonColors" (click)="agregarPunto(false, 'recepcion')" ><ion-icon name="remove-outline"></ion-icon></ion-button>
+            </ion-item>
+            <ion-item>
+              <ion-label>Ataque</ion-label>
+              <ion-button color="buttonColors" (click)="agregarPunto(true, 'ataque')" ><ion-icon name="add"></ion-icon></ion-button>
+              <ion-button color="buttonColors" (click)="agregarPunto(false, 'ataque')" ><ion-icon name="remove-outline"></ion-icon></ion-button>
+            </ion-item>
+            <ion-item>
+              <ion-label>Bloqueo</ion-label>
+              <ion-button color="buttonColors" (click)="agregarPunto(false,'bloqueo')"><ion-icon name="add"></ion-icon></ion-button>
+              <ion-button color="buttonColors" (click)="agregarPunto(false,'bloqueo')"><ion-icon name="remove-outline"></ion-icon></ion-button>
+            </ion-item>
+          </ion-list>
+      </ion-card>
+      <div class="acomodarBoton">
+        <ion-button color="buttonEndColor" (click)="setFinalSet()" shape="round">
+          Terminar Set
+        </ion-button>
+      </div>
+  </ion-card>
 
 </ion-content>

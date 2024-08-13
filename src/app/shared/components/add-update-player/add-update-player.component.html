@@ -3,6 +3,17 @@
 
     <form [formGroup]="form" class="ion-padding ion-text-center" (ngSubmit)="submit()" >
            
+      <!-- ====================== IMAGEN =====================-->
+      <ion-avatar *ngIf="form.value.image">
+        <img [src]="form.value.image" />
+      </ion-avatar>
+
+      <ion-icon class="image-icon" *ngIf="!form.value.image" name="image-outline"></ion-icon>
+      <br>
+      <ion-button (click)="takePicture()" mode="ios" size="small" color="buttonColors" shape="round">
+        Tomar/seleccionar una foto
+      </ion-button>
+      
       <!-- =============== NAME ===============--> 
       <!-- Esto es para pasarle al custim-inout los iconos-->
       <app-custom-input autocomplete="name" [control]="form.controls.name" type="text" label="Nombre"></app-custom-input>
@@ -20,12 +31,21 @@
 
       <ion-list>
         <ion-item>
-          <ion-select aria-label="category" placeholder="Seleccionar las categorías de la jugadora" [multiple]="true" (ionChange)="handleChange($event)">
+          <ion-select aria-label="category" placeholder="Seleccionar las categorías de la jugadora" [multiple]="true" (ionChange)="handleChangeCategories($event)">
             <ion-select-option *ngFor="let category of categories" [value]="category">{{ category.name }}</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-list>
 
+      <!-- =============== POSICIONES ===============--> 
+
+      <ion-list>
+        <ion-item>
+          <ion-select aria-label="position" placeholder="Seleccionar las posiciones de la jugadora" [multiple]="true" (ionChange)="handleChangePositions($event)">
+            <ion-select-option *ngFor="let position of positions" [value]="position">{{ position.name }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
 
       <ion-button class="ion-margin" node="ios" type="submit" [disabled]="form.invalid"> Agregar 
         <ion-icon slot="end" name="happy-outline"></ion-icon>   
