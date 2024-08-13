@@ -1,7 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
-import { AddUpdatePlayerComponent } from 'src/app/shared/components/add-update-player/add-update-player.component';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +11,8 @@ export class HomePage implements OnInit {
 
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
+  
+  constructor() { }
 
   ngOnInit() {
   }
@@ -20,11 +21,12 @@ export class HomePage implements OnInit {
     this.firebaseSvc.signOut();
   }
 
-  // =========== agregar o actualizar jugadora =====
-  addUpdatePlayer(){
-    this.utilsSvc.presentModal({
-      component: AddUpdatePlayerComponent,
-      cssClass: 'add-update-modal'
-    })
+  goJugadoras(){
+    this.utilsSvc.routerLink('main/players');
   }
+
+  goPartidos(){
+    this.utilsSvc.routerLink('main/matches');
+  }
+
 }

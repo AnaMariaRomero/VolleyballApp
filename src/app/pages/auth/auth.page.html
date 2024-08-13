@@ -2,7 +2,7 @@
 <ion-content>
     <div class="d-flex-center"> 
         <!-- La variable que tenemos en el ts-->
-        <form [formGroup]="form" class="auth-form" (ngSubmit)="submit()" (keypress.enter)="submit">
+        <form [formGroup]="form" class="auth-form" (ngSubmit)="submit()">
            
             <app-logo></app-logo>
             <!-- =============== EMAIL ===============-->
@@ -20,7 +20,7 @@
                 <div *ngIf="form.controls.password.errors?.['required']"> La contraseña es requerida. </div>
             </div>
             <!-- =============== RECUPERAR CONTRASEÑA ===============-->
-            <p class="ion-text-end" routerLink="forgot-password"> Che boludo, ¿olvidaste la contraseña? AJAJAJAJA </p>
+            <p class="ion-text-end" routerLink="forgot-password"> Che, ¿olvidaste la contraseña? AJAJAJAJA </p>
 
             <ion-button color="buttonColors" expand="block" node="ios" type="submit" [disabled]="form.invalid"> Ingresar
                 <ion-icon slot="end" name="log-in-outline"></ion-icon> 
@@ -30,5 +30,4 @@
             </ion-button>
         </form>
     </div>
-    
 </ion-content>

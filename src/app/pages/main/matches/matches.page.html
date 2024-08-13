@@ -1,0 +1,36 @@
+<app-header backButton="/auth" title="Partidos"></app-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Partidos</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- listar los partidos-->
+  <ion-list *ngFor="let match of matches">
+    <ion-card>
+      <div class="img-wrapper">
+        <img alt="partidos" src="assets/icon/logoPequeno.png" />
+      </div>
+      <ion-card-header>
+        <ion-card-title>Vs. {{ match.team }}</ion-card-title>
+        <ion-card-subtitle>Fecha: {{ match.date }} </ion-card-subtitle>
+        
+      </ion-card-header>
+    
+      <ion-card-content>
+        <ion-button (click)="goPartido(match.id)">
+          Detalles del partido
+        </ion-button>
+      </ion-card-content>
+      </ion-card>
+</ion-list>
+  <!-- Agregar los nuevos partidos -->
+    <!-- Es un pop up en pantalla completa o modal que viene del utils -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="buttonColors" (click)="addUpdateMatch()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
