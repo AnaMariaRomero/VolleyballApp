@@ -13,6 +13,7 @@ import { Statistics } from '../models/statistics.model';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Position } from '../models/position.model';
 import { Observable, firstValueFrom, map } from 'rxjs';
+import { Match } from '../models/match.model';
 
 @Injectable({
     providedIn: 'root'
@@ -238,6 +239,13 @@ export class FirebaseService {
         const path =  `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}`;
 
         this.updateDocument(path, setGame);
+    }
+
+    updateSetMatch(match:Match){
+        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+        const path =  `users/${userUid}/matches/${match.id}`;
+
+        this.updateDocument(path, match);
     }
 
     async addArraySetsGameForMatch(matchId: string) {

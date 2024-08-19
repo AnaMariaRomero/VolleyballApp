@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Match } from 'src/app/models/match.model';
 import { Player } from 'src/app/models/player.model';
 import { SetGame } from 'src/app/models/set-game.model';
@@ -30,7 +30,7 @@ export class MatchPage implements OnInit {
   finPartido: boolean = false;
   finSet: boolean;
 
-  constructor(private cd: ChangeDetectorRef, private route: ActivatedRoute) { }
+  constructor(private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(async (params) => {
@@ -124,8 +124,9 @@ export class MatchPage implements OnInit {
 
   terminarPartido(){
     this.match.matchFinish = true;
-    const url = `http://localhost:8101/main/match?id=${this.match.id}`;
-    window.location.href = url;
+    this.router.navigate(['/match', this.partidoId]);
+
+    console.log("This match entire: ", this.match);
   }
 
   terminoPartido(match: Match){
