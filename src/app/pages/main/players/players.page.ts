@@ -40,4 +40,10 @@ export class PlayersPage implements OnInit {
 
     if (succes) this.getPlayers();
   }
+
+  verDetalleJugadora(playerId: string){
+    console.log(playerId, "verDetalle")
+    //ir a ver los partidos asociados a ese jugador.
+    this.utilsSvc.router.navigate(['main/player'], { queryParams: { id: playerId } });
+  }
 }

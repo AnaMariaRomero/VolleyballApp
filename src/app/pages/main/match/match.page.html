@@ -15,22 +15,34 @@
         </ion-row>
     </ion-grid>
     <!-- Acá vamos a poner el listado de jugadoras -->
-    <ion-card *ngIf="isOpen && !finSet">
-        <ion-card-header> JUGADORAS </ion-card-header>
-        <ion-card-subtitle>Marque las jugadoras para el set</ion-card-subtitle>
-        <ion-grid [fixed]="true">
-            <ion-row>
-                <ion-col *ngFor="let player of players" (click)="selectedPlayer(player.id)"><ion-chip>{{player.numberPlayer}}</ion-chip></ion-col>
-            </ion-row>
-        </ion-grid>
-        <div class="acomodarBotones">
-            <ion-button color="buttonColors" (click)="addUpdateSet()"> Comenzar </ion-button>
-            <ion-button color="buttonEndColor" (click)="terminarPartido()"> Terminar Partido </ion-button>
+    <div *ngIf="isLoading"> Loading...</div>
+    <ion-card *ngIf="(!isLoading && !finSet)">
+        <div *ngIf="!isOpen">
+            <ion-button (click)="prepararSet()" expand="block" fill="clear" shape="round">
+                Preparar set: <div *ngIf="numberSet != 0">{{numberSet}}</div> <div *ngIf="numberSet == 0"> no seleccionado. </div>
+            </ion-button>
         </div>
-    
+        <div *ngIf="isOpen">
+            <ion-button (click)="prepararSet()" expand="block" fill="clear" shape="round">
+                Cancelar
+            </ion-button>
+            
+                <ion-card-header> JUGADORAS </ion-card-header>
+            <ion-card-subtitle>Marque las jugadoras para el set</ion-card-subtitle>
+            <ion-grid [fixed]="true">
+                <ion-row>
+                    <ion-col *ngFor="let player of players" (click)="selectedPlayer(player.id)"><ion-chip>{{player.numberPlayer}}</ion-chip></ion-col>
+                </ion-row>
+            </ion-grid>
+            <div class="acomodarBotones">
+                <ion-button color="buttonColors" (click)="addUpdateSet()"> Comenzar </ion-button>
+                <ion-button color="buttonEndColor" (click)="terminarPartido()"> Terminar Partido </ion-button>
+            </div>
+        </div>
+        
     </ion-card >
 
-    <ion-card *ngIf="finSet">
+    <ion-card *ngIf="finSet && !isOpen">
         Set terminado.
         En otra version se mostrará la estadística.
     </ion-card>

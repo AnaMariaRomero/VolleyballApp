@@ -27,7 +27,12 @@ const routes: Routes = [
   {
     path: 'match',
     loadChildren: () => import('./match/match.module').then( m => m.MatchPageModule)
-  }
+  },
+  {
+    path: 'player',
+    loadChildren: () => import('./player/player.module').then( m => m.PlayerPageModule)
+  },
+
 
 ];
 

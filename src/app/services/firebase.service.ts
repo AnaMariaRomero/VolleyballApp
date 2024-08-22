@@ -3,7 +3,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth'
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { User } from '../models/user.model';
 import { AngularFirestore } from '@angular/fire/compat/firestore'
-import { doc, getFirestore, setDoc, getDoc, getDocs, addDoc, collection, collectionData, query, DocumentData, updateDoc } from  '@angular/fire/firestore';
+import { doc, getFirestore, setDoc, getDoc, getDocs, addDoc, collection, collectionData, query, DocumentData, updateDoc, arrayUnion } from  '@angular/fire/firestore';
 import { UtilsService } from './utils.service';
 import { getStorage, uploadString, ref, getDownloadURL } from 'firebase/storage'
 import { Category } from '../models/category.model';
@@ -253,8 +253,8 @@ export class FirebaseService {
         const path = `users/${userUid}/matches/${matchId}/sets`;
     
         // Buscar si ya existen sets en la base de datos
-    const existingSets = this.getCollectionData(path);
-    const sets = await firstValueFrom(existingSets);
+        const existingSets = this.getCollectionData(path);
+        const sets = await firstValueFrom(existingSets);
     
         if (sets && sets.length > 0) {
             console.log("Sets ya existentes: ", sets);
@@ -278,23 +278,59 @@ export class FirebaseService {
      
     finishSet(setGame:SetGame,statisticsPlayersArray: Statistics[]) {
         const userUid = JSON.parse(localStorage.getItem('user')).uid;
-        const path =  `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}/statistics`;
+        //acá, agregar el statistic al jugador particular, lo tengo en playerId del mismo
+        const path =  `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}`;
 
-        statisticsPlayersArray.forEach(setData => {
-            this.addDocument(path, setData)
-            .then(() => {
-                console.log(`Statistics añadido: `, setData.setId);
-            })
-            .catch(error => {
-                console.error('Error añadiendo el statistics: ', error);
-            });
+        statisticsPlayersArray.forEach(statistic => {
+            this.updatePlayerStatistic(statistic);
         });
 
         // updetear el set: 
         this.updateSetGame(setGame);
-
-        const datos = this.getDocument(path);
       }
+
+      //updeteo al jugador con su estadistica
+      async updatePlayerStatistic(statistics: Statistics){
+        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+
+        
+        // Obtener referencia al documento del jugador
+        const docRef = doc(getFirestore(), `users/${userUid}/players/${statistics.playerId}`);
+        const docSnap =  getDoc(docRef);
+
+        // Usar `arrayUnion` para agregar la nueva estadística al array `estadística[]`
+        if ((await docSnap).exists()) {
+            // Usar `updateDoc` para agregar la nueva estadística al array `estadística[]`
+            updateDoc(docRef, {
+                'staticsPlayer': arrayUnion(statistics)
+            });
+            console.log('Estadística añadida exitosamente.');
+        } else {
+            console.error('No se encontró el jugador con el ID proporcionado.');
+        }
+      }
+
+    getPlayer(playerId:string){
+        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+        //otra forma de obtener datos con el getDocument()
+        const path = `users/${userUid}/players/${playerId}`;
+        const datos = this.getDocument(path);
+        // con este tengo que hacer un then porque es un Promise
+        return datos;
+    }
+
+    async getMatchSetInformation(matchId: string, setId: string): Promise<{ nombrePartido: string; setPartido: number }> {
+        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+        const pathMatch = `users/${userUid}/matches/${matchId}`;
+        const match = await this.getDocument(pathMatch); // Espera a que se resuelva la promesa y obtén el partido.
+        const nombrePartido = match['team'];
+    
+        const pathSet = `users/${userUid}/matches/${matchId}/sets/${setId}`;
+        const setGame = await this.getDocument(pathSet); // Espera a que se resuelva la promesa y obtén el set.
+        const setPartido = setGame['number'];
+    
+        return { nombrePartido, setPartido };
+    }
 }
 
 /**************************************************************

@@ -19,7 +19,8 @@ export class AddUpdatePlayerComponent  implements OnInit {
     numberPlayer: new FormControl(),
     name: new FormControl('',[Validators.required, Validators.minLength(4)]),
     categories: new FormControl('', []),
-    positions: new FormControl('', [])
+    positions: new FormControl('', []),
+    statisticsPlayer: new FormControl([])
   })
   
   firebaseSvc = inject(FirebaseService);
@@ -55,6 +56,7 @@ export class AddUpdatePlayerComponent  implements OnInit {
       this.form.controls.image.setValue(imageUrl);
 
       delete this.form.value.id;
+      this.form.value.statisticsPlayer = [];
 
       // ====== Subir el documento ========
       this.firebaseSvc.addDocument(path, this.form.value).then(async res => {

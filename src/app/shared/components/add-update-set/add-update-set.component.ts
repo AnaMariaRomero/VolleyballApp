@@ -6,8 +6,6 @@ import { Statistics } from 'src/app/models/statistics.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 
-type tipoAccion = 'saque' | 'armado' | 'ataque' | 'recepción' | 'defensa';
-
 @Component({
   selector: 'app-add-update-set',
   templateUrl: './add-update-set.component.html',
@@ -44,6 +42,7 @@ export class AddUpdateSetComponent  implements OnInit {
     //creo el array para almacenar los puntos de cada jugadora.
     this.statisticsPlayersArray = playersSetIds.map(item => ({
       playerId: item,
+      matchId: this.matchId,
       setId: this.setId,
       statisticsPositiveList: [0,0,0,0,0,0],
       statisticsNegativeList: [0,0,0,0,0,0]
@@ -156,8 +155,6 @@ export class AddUpdateSetComponent  implements OnInit {
     this.setGame.id = this.setId;
     this.setGame.matchId = this.matchId;
     this.utilsSvc.dismissModal({ success: true });
-    // se debe subir el set
-    console.log("statiscs fianl: ", this.setGame);
     this.firebaseSvc.finishSet(this.setGame, this.statisticsPlayersArray);
   }
 }

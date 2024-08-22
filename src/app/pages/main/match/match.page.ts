@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Match } from 'src/app/models/match.model';
 import { Player } from 'src/app/models/player.model';
 import { SetGame } from 'src/app/models/set-game.model';
@@ -23,14 +22,15 @@ export class MatchPage implements OnInit {
   match: Match;
   partidoId: string;
   numberSet: number = 0;
-  isOpen = false;
+  isOpen:boolean = false;
   players: Player[];
   selectedPlayers: string[] = [];
   setsGames: SetGame[] = [];
   finPartido: boolean = false;
   finSet: boolean;
+  isLoading = true;
 
-  constructor(private router: Router, private route: ActivatedRoute) { }
+  constructor( private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(async (params) => {
@@ -49,9 +49,9 @@ export class MatchPage implements OnInit {
             // Volver a cargar los sets después de crearlos
             await this.getSetsGamePorMatchId(this.partidoId);
         }
+        this.isLoading = false;
     });
 }
-
   async getSetsGamePorMatchId(partidoId: string) {
     const resultado = await this.firebaseSvc.getSetsGameByMatchId(partidoId);
     resultado.subscribe((sets: SetGame[]) => {
@@ -102,16 +102,17 @@ export class MatchPage implements OnInit {
     }
   }
 
+  prepararSet(){
+    if (this.numberSet != 0) {this.isOpen = !this.isOpen;};
+  }
+
   changeSet(numberSet: number){
-    if (!this.isOpen) {
-      this.isOpen = true; 
+    if (numberSet != this.numberSet) {
       this.numberSet = numberSet;
       const set = this.setsGames.find(obj => obj.number === this.numberSet);
       this.finSet = set.setFinish
     }
-    else {
-      this.isOpen = false;
-    } 
+
   }
 
   selectedPlayer(player: string) {
@@ -124,9 +125,8 @@ export class MatchPage implements OnInit {
 
   terminarPartido(){
     this.match.matchFinish = true;
-    this.router.navigate(['/match', this.partidoId]);
-
-    console.log("This match entire: ", this.match);
+    
+    window.location.reload();
   }
 
   terminoPartido(match: Match){
