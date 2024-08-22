@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { MainPageRoutingModule } from './main-routing.module';
+import { PlayerPageRoutingModule } from './player-routing.module';
 
-import { MainPage } from './main.page';
+import { PlayerPage } from './player.page';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
@@ -14,9 +15,10 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     CommonModule,
     FormsModule,
     IonicModule,
+    SharedModule,
     NgApexchartsModule,
-    MainPageRoutingModule
+    PlayerPageRoutingModule
   ],
-  declarations: [MainPage]
+  declarations: [PlayerPage]
 })
-export class MainPageModule {}
+export class PlayerPageModule {}
