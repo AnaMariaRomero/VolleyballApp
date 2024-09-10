@@ -25,6 +25,7 @@ export class MatchPage implements OnInit {
   isOpen:boolean = false;
   players: Player[];
   selectedPlayers: string[] = [];
+  selectedPlayersToShow: number[] = [];
   setsGames: SetGame[] = [];
   finPartido: boolean = false;
   finSet: boolean;
@@ -112,20 +113,20 @@ export class MatchPage implements OnInit {
       const set = this.setsGames.find(obj => obj.number === this.numberSet);
       this.finSet = set.setFinish
     }
-
   }
 
-  selectedPlayer(player: string) {
-    if (!this.selectedPlayers.includes(player)) {
-      this.selectedPlayers.push(player);
+  selectedPlayer(player: Player) {
+    if (!this.selectedPlayers.includes(player.id)) {
+      this.selectedPlayers.push(player.id);
+      this.selectedPlayersToShow.push(player.numberPlayer);
     } else {
-      this.selectedPlayers = this.selectedPlayers.filter(p => p !== player);
+      this.selectedPlayers = this.selectedPlayers.filter(p => p !== player.id);
+      this.selectedPlayersToShow = this.selectedPlayersToShow.filter(p => p !== player.numberPlayer);
     }
   }
 
   terminarPartido(){
     this.match.matchFinish = true;
-    
     window.location.reload();
   }
 

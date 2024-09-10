@@ -31,9 +31,13 @@
             <ion-card-subtitle>Marque las jugadoras para el set</ion-card-subtitle>
             <ion-grid [fixed]="true">
                 <ion-row>
-                    <ion-col *ngFor="let player of players" (click)="selectedPlayer(player.id)"><ion-chip>{{player.numberPlayer}}</ion-chip></ion-col>
+                    <ion-col *ngFor="let player of players" (click)="selectedPlayer(player)"><ion-chip>{{player.numberPlayer}} {{player.name}}</ion-chip></ion-col>
                 </ion-row>
             </ion-grid>
+            <ion-card-subtitle>Jugadoras seleccionadas: </ion-card-subtitle>
+            <ion-row>
+                <ion-col *ngFor="let player of selectedPlayersToShow"><ion-chip>{{player}}</ion-chip></ion-col>
+            </ion-row>
             <div class="acomodarBotones">
                 <ion-button color="buttonColors" (click)="addUpdateSet()"> Comenzar </ion-button>
                 <ion-button color="buttonEndColor" (click)="terminarPartido()"> Terminar Partido </ion-button>
