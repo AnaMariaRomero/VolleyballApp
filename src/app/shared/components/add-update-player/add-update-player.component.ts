@@ -15,7 +15,7 @@ export class AddUpdatePlayerComponent  implements OnInit {
 
   form = new FormGroup({
     id: new FormControl(''),
-    image: new FormControl(''),
+    image: new FormControl('', [Validators.required]),
     numberPlayer: new FormControl(),
     name: new FormControl('',[Validators.required, Validators.minLength(4)]),
     categories: new FormControl('', []),
