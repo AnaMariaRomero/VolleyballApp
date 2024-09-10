@@ -8,6 +8,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddUpdatePlayerComponent } from './components/add-update-player/add-update-player.component';
 import { AddUpdateMatchComponent } from './components/add-update-match/add-update-match.component';
 import { AddUpdateSetComponent } from './components/add-update-set/add-update-set.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { GraphicsComponent } from './components/graphics/graphics.component';
 
 
 
@@ -19,6 +21,7 @@ import { AddUpdateSetComponent } from './components/add-update-set/add-update-se
     AddUpdatePlayerComponent,
     AddUpdateMatchComponent,
     AddUpdateSetComponent,
+    GraphicsComponent,
   ],
   exports: [
     HeaderComponent,
@@ -28,12 +31,14 @@ import { AddUpdateSetComponent } from './components/add-update-set/add-update-se
     AddUpdatePlayerComponent,
     AddUpdateMatchComponent,
     AddUpdateSetComponent,
+    GraphicsComponent,
   ],
   imports: [
     CommonModule,
     IonicModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule, 
+    NgApexchartsModule,
   ]
 })
 export class SharedModule { }

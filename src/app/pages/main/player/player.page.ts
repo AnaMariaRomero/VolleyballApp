@@ -41,8 +41,6 @@ export class PlayerPage implements OnInit {
   isSearching = true;
   playerId: string;
   player: Player;
-  nameMatch: string[] = [];
-  numberSet: number[] = [];
   statistics: Statistics[];
   statisticsPositiveList: number[];
   statisticsNegativeList: number[];
@@ -59,13 +57,7 @@ export class PlayerPage implements OnInit {
   }
 
   async getStatistics(player: Player) {
-    this.statistics = player.staticsPlayer;
-    if (this.statistics.length > 0) {
-      this.statistics.forEach((statistic, index) => {
-      this.getMatchSetInformation(statistic.matchId, statistic.setId, index);
-    })
-    }
-    
+    this.statistics = player.staticsPlayer;  
   }
 
   async getPlayerById(playerId: string): Promise<void> {
@@ -74,46 +66,4 @@ export class PlayerPage implements OnInit {
     });
   }
 
-  //tarea para dentro de unas horas: 
-  //cerrar la grafica en que estoy parada 
-  //si tengo que abrir la gráfica, minimo debo contar con los datos para verla
-  cerrarGrafica(i: number){
-      this.verGrafica[i] = false;    
-  }
-
-  async getMatchSetInformation(matchId: string, setId: string, i: number) {
-    await this.firebaseSvc.getMatchSetInformation(matchId, setId).then((result) => {
-      this.nameMatch[i] = result.nombrePartido;
-      this.numberSet[i] = result.setPartido;});
-  }
-
-  armarGrafica(statistic: Statistics, i: number) {
-    this.verGrafica[i] = true;
-    this.chartOptions[i] = {
-        series: [
-            {
-                name: "Positivo",
-                data: [statistic.statisticsPositiveList[0], statistic.statisticsPositiveList[1],
-                statistic.statisticsPositiveList[2], statistic.statisticsPositiveList[3],
-                statistic.statisticsPositiveList[4], statistic.statisticsPositiveList[5]]
-            },
-            {
-                name: "Negativo",
-                data: [statistic.statisticsNegativeList[0], statistic.statisticsNegativeList[1],
-                statistic.statisticsNegativeList[2], statistic.statisticsNegativeList[3],
-                statistic.statisticsNegativeList[4], statistic.statisticsNegativeList[5]]
-            }
-        ],
-        chart: {
-            height: 350,
-            type: "radar"
-        },
-        title: {
-            text: "Gráfica cheta"
-        },
-        xaxis: {
-            categories: ["Saque", "Armado", "Ataque", "Recepcion", "Defensa", "Bloqueo"]
-        }
-    };
-    }
 }

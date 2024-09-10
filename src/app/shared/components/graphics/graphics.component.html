@@ -1,0 +1,43 @@
+<ion-card *ngIf="tienePuntosParaMostrar(statistics.statisticsNegativeList, statistics.statisticsPositiveList)">
+  Estadistica del partido: {{nameMatch}}, set: {{numberSet}}
+  <ion-grid [fixed]="true">Puntos positivos: 
+    <ion-row>
+      <ion-col size="6" size-md="4" size-lg="2">Saque: {{statistics.statisticsPositiveList[0]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Armado: {{statistics.statisticsPositiveList[1]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Ataque: {{statistics.statisticsPositiveList[2]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Recepcion: {{statistics.statisticsPositiveList[3]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Defensa: {{statistics.statisticsPositiveList[4]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Bloqueo: {{statistics.statisticsPositiveList[5]}}</ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid [fixed]="true">Puntos Negativos: 
+    <ion-row>
+      <ion-col size="6" size-md="4" size-lg="2">Saque: {{statistics.statisticsNegativeList[0]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Armado: {{statistics.statisticsNegativeList[1]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Ataque: {{statistics.statisticsNegativeList[2]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Recepcion: {{statistics.statisticsNegativeList[3]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Defensa: {{statistics.statisticsNegativeList[4]}}</ion-col>
+      <ion-col size="6" size-md="4" size-lg="2">Bloqueo: {{statistics.statisticsNegativeList[5]}}</ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-card>
+    <ion-button *ngIf="!verGrafica" (click)="armarGrafica(statistics)" expand="block" fill="clear" shape="round">
+      Ver gráfica
+    </ion-button>
+    <ion-button *ngIf="verGrafica" (click)="cerrarGrafica()" expand="block" fill="clear" shape="round">
+      Cerrar
+    </ion-button>
+    <ion-card-header *ngIf="verGrafica">
+      <div id="chart">
+          <apx-chart
+              [series]="chartOptions?.series"
+              [chart]="chartOptions?.chart"
+              [xaxis]="chartOptions?.xaxis"
+              [title]="chartOptions?.title">
+          </apx-chart>
+      </div>
+  </ion-card-header>
+  </ion-card>
+</ion-card>

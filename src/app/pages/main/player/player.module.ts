@@ -8,7 +8,6 @@ import { PlayerPageRoutingModule } from './player-routing.module';
 
 import { PlayerPage } from './player.page';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
   imports: [
@@ -16,7 +15,6 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     FormsModule,
     IonicModule,
     SharedModule,
-    NgApexchartsModule,
     PlayerPageRoutingModule
   ],
   declarations: [PlayerPage]
