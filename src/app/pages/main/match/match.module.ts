@@ -17,6 +17,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
     SharedModule,
     MatchPageRoutingModule
   ],
-  declarations: [MatchPage]
+  declarations: [MatchPage] 
 })
 export class MatchPageModule {}

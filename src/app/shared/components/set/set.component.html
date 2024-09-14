@@ -1,9 +1,11 @@
-<app-header [isModal]="true" title="Cargar Set"></app-header>
-<ion-content>
-  <ion-card *ngIf="isLoading">
-    CARGANDO...
+<div *ngIf="isLoading">
+  <ion-card >
+      CARGANDO...
   </ion-card>
-  <ion-card *ngIf="!isLoading">
+</div> 
+<div *ngIf="!setGame.setFinish">
+  
+  <ion-card>
     
       <ion-card-header>
         <ion-card-title> Set número: {{numberSet}}</ion-card-title>
@@ -68,5 +70,4 @@
         </ion-button>
       </div>
   </ion-card>
-
-</ion-content>
+</div>

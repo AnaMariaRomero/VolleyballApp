@@ -10,6 +10,7 @@ import { AddUpdateMatchComponent } from './components/add-update-match/add-updat
 import { AddUpdateSetComponent } from './components/add-update-set/add-update-set.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { GraphicsComponent } from './components/graphics/graphics.component';
+import { SetComponent } from './components/set/set.component';
 
 
 
@@ -22,6 +23,7 @@ import { GraphicsComponent } from './components/graphics/graphics.component';
     AddUpdateMatchComponent,
     AddUpdateSetComponent,
     GraphicsComponent,
+    SetComponent,
   ],
   exports: [
     HeaderComponent,
@@ -32,6 +34,7 @@ import { GraphicsComponent } from './components/graphics/graphics.component';
     AddUpdateMatchComponent,
     AddUpdateSetComponent,
     GraphicsComponent,
+    SetComponent,
   ],
   imports: [
     CommonModule,

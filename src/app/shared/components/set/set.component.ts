@@ -1,6 +1,6 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { Route, Router } from '@angular/router';
-import { indexedDBLocalPersistence } from 'firebase/auth';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
 import { Player } from 'src/app/models/player.model';
 import { SetGame } from 'src/app/models/set-game.model';
 import { Statistics } from 'src/app/models/statistics.model';
@@ -8,22 +8,20 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
-  selector: 'app-add-update-set',
-  templateUrl: './add-update-set.component.html',
-  styleUrls: ['./add-update-set.component.scss'],
+  selector: 'app-set',
+  templateUrl: './set.component.html',
+  styleUrls: ['./set.component.scss'],
 })
-
-export class AddUpdateSetComponent  implements OnInit {
+export class SetComponent  implements OnInit {
 
   @Input() numberSet: number;
   @Input() playersSet: string[];
-  @Input() setId: string;
   @Input() matchId: string;
+  @Input() setGame: SetGame;
 
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
 
-  setGame: SetGame = {} as SetGame;
   pointsFavor: number = 0;
   pointsAgainst: number = 0;
   players!: Player[];
@@ -33,11 +31,13 @@ export class AddUpdateSetComponent  implements OnInit {
   isLoading: boolean;
 
   
-  constructor(private router: Router) { }
+  constructor(private loadingController: LoadingController) { }
 
   ngOnInit() {
+    console.log(this.playersSet, this.setGame, this.matchId)
     this.getJugadorasPorId(this.playersSet);
     this.createStaticsticsPlayersArray(this.playersSet);
+    console.log("pasa por acá")
   }
 
   createStaticsticsPlayersArray(playersSetIds: string[]) {
@@ -45,7 +45,7 @@ export class AddUpdateSetComponent  implements OnInit {
     this.statisticsPlayersArray = playersSetIds.map(item => ({
       playerId: item,
       matchId: this.matchId,
-      setId: this.setId,
+      setId: this.setGame.id,
       statisticsPositiveList: [0,0,0,0,0,0],
       statisticsNegativeList: [0,0,0,0,0,0]
     }))
@@ -149,32 +149,32 @@ export class AddUpdateSetComponent  implements OnInit {
     this.pointsAgainst++;
   }
 
-  setFinalSet() {
+  async setFinalSet() {
+    // Mostrar el loading antes de ejecutar el proceso
+    const loading = await this.loadingController.create({
+      message: 'Finalizando set...',
+      spinner: 'crescent', // O cualquier otro tipo de spinner
+    });
+    this.isLoading = true;
     this.setGame.setFinish = true;
     this.setGame.pointsAgainst = this.pointsAgainst;
     this.setGame.pointsFavor = this.pointsFavor;
-    this.setGame.id = this.setId;
-    this.setGame.matchId = this.matchId;
     this.setGame.players = this.players;
-  
-    
-  
+
     // Esperar a que finishSet termine y luego recargar la página
-    
-    this.isLoading = true;console.log("rhisloa", this.isLoading)
+    await loading.present();
+
     this.firebaseSvc.finishSet(this.setGame, this.statisticsPlayersArray)
       .then(() => {
-        
-        setTimeout(() => {
-          
-        }, 2000);
-        this.isLoading = false;
-      })
-      .catch(error => {
-        console.error('Error finalizando el set: ', error);
-        // Manejo de errores aquí si es necesario
-      });
-      
-    this.utilsSvc.dismissModal({ success: true });
+      // Establecer un timeout para recargar la página
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    })
+    .catch(error => {
+      console.error('Error finalizando el set: ', error);
+      loading.dismiss(); // Ocultar el loading también en caso de error
+    });
+    this.isLoading = false;
   }
 }
