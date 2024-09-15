@@ -17,9 +17,35 @@ export class PlayersPage implements OnInit {
   utilsSvc = inject(UtilsService);
 
   players: Player[];
+  playersToShow: Player[] = [];
+  categories: Category[];
+  lastCategory: string;
+  isShowing: boolean = false;
 
   ngOnInit() {
     this.getPlayers();
+    this.getParams();
+  }
+
+  async getParams(){
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
+    this.firebaseSvc.getParams('categorías').then( res => {
+
+      this.categories = res;     
+        
+    }).catch(error => {
+       console.log(error);
+
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        color: 'tertiary',
+        position: "middle",
+        icon: 'alert-circle-outline'
+      })
+
+     }).finally(() => { loading.dismiss(); });
   }
 
   getPlayers(){
@@ -29,6 +55,24 @@ export class PlayersPage implements OnInit {
         sub.unsubscribe();
       }
     });
+  }
+
+  buscarJugadorasPorCategoria(category: string){
+    if (category != this.lastCategory){
+      this.isShowing = true;
+      this.playersToShow = [];
+      this.lastCategory = category;
+      this.players.forEach(player => {
+        player.categories.find(obj => {
+          if(obj.name === category){
+            this.playersToShow.push(player);
+          }
+        });
+      });
+    } else{
+      this.playersToShow = [];
+      this.isShowing = false;
+    }
   }
 
   // =========== agregar o actualizar jugadora =====
@@ -42,7 +86,6 @@ export class PlayersPage implements OnInit {
   }
 
   verDetalleJugadora(playerId: string){
-    console.log(playerId, "verDetalle")
     //ir a ver los partidos asociados a ese jugador.
     this.utilsSvc.router.navigate(['main/player'], { queryParams: { id: playerId } });
   }

@@ -83,7 +83,6 @@ export class FirebaseService {
     // ============ Agregar un documento ==============
     // se le pasa por parametro el path de lo que queremos agregar, en este caso es users
     addDocument(path:string, data: any){
-        console.log("DATOS: ", data)
         return addDoc(collection(getFirestore(), path), data);
     }
 
@@ -237,7 +236,6 @@ export class FirebaseService {
     updateSetGame(setGame:SetGame){
         const userUid = JSON.parse(localStorage.getItem('user')).uid;
         const path =  `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}`;
-        console.log("pasa por acá")
         this.updateDocument(path, setGame);
     }
 
@@ -257,7 +255,6 @@ export class FirebaseService {
         const sets = await firstValueFrom(existingSets);
     
         if (sets && sets.length > 0) {
-            console.log("Sets ya existentes: ", sets);
             return sets;
         }
     
@@ -276,25 +273,22 @@ export class FirebaseService {
         return newSets;
     }
      
-    finishSet(setGame: SetGame, statisticsPlayersArray: Statistics[]): Promise<void> {
+    finishSet(setGame: SetGame, staticsPlayersArray: Statistics[]): Promise<void> {
         return new Promise<void>((resolve, reject) => {
           const userUid = JSON.parse(localStorage.getItem('user')).uid;
           const path = `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}`;
       
           // Promesas para las estadísticas de los jugadores
-          const statisticPromises = statisticsPlayersArray.map(statistic => {
+          const statisticPromises = staticsPlayersArray.map(statistic => {
             return this.updatePlayerStatistic(statistic);
           });
-          console.log("DEbajo del staticPromises: ")
           // Esperar a que todas las estadísticas se actualicen
           Promise.all(statisticPromises)
             .then(() => {
               // Actualizar el set
-              console.log("primer then: ")
               return this.updateSetGame(setGame);
             })
             .then(() => {
-                console.log("segundo then ")
               // Todo salió bien, resolver la promesa principal
               resolve();
             })

@@ -62,7 +62,6 @@ export class MatchPage implements OnInit {
     const resultado = await this.firebaseSvc.getSetsGameByMatchId(partidoId);
     resultado.subscribe((sets: SetGame[]) => {
         this.setsGames = sets;
-        console.log("Sets obtenidos: ", this.setsGames);
     });
   }
 
@@ -70,8 +69,6 @@ export class MatchPage implements OnInit {
   getPartido(partidoId: string): Promise<void> {
     //otra forma de obtener datos con GetDocument
     return this.firebaseSvc.getMatch(partidoId).then((match: Match) => {
-      // guardamos al usuario localmente;
-      console.log("djksadj: ", match)
       this.match = match;
     });
   }

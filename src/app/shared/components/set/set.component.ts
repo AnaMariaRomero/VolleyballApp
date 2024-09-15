@@ -25,24 +25,21 @@ export class SetComponent  implements OnInit {
   pointsFavor: number = 0;
   pointsAgainst: number = 0;
   players!: Player[];
-  statisticsPlayersArray: Statistics[] = [];
+  staticsPlayersArray: Statistics[] = [];
   jugadoraSeleccionada: boolean = false;
   selectedPlayer!: Player;
-  isLoading: boolean;
 
   
-  constructor(private loadingController: LoadingController) { }
+  constructor() { }
 
   ngOnInit() {
-    console.log(this.playersSet, this.setGame, this.matchId)
     this.getJugadorasPorId(this.playersSet);
-    this.createStaticsticsPlayersArray(this.playersSet);
-    console.log("pasa por acá")
+    this.createstaticsPlayersArray(this.playersSet);
   }
 
-  createStaticsticsPlayersArray(playersSetIds: string[]) {
+  createstaticsPlayersArray(playersSetIds: string[]) {
     //creo el array para almacenar los puntos de cada jugadora.
-    this.statisticsPlayersArray = playersSetIds.map(item => ({
+    this.staticsPlayersArray = playersSetIds.map(item => ({
       playerId: item,
       matchId: this.matchId,
       setId: this.setGame.id,
@@ -62,26 +59,20 @@ export class SetComponent  implements OnInit {
       switch(tipo){
         case 'armado':
           this.agregarPuntoPositivoJugadora(1);
-          console.log('sumo armado');
           break;
         case 'bloqueo':
-          console.log('sumo bloqueo');
           this.agregarPuntoPositivoJugadora(5);
           break;
         case 'ataque':
-          console.log('sumo ataque');
           this.agregarPuntoPositivoJugadora(2);
            break;
         case 'defensa':
-          console.log('sumo defensa');
           this.agregarPuntoPositivoJugadora(4);
           break;
         case 'saque':
-          console.log('sumo saque');
           this.agregarPuntoPositivoJugadora(0);
           break;
        default:
-          console.log('sumo recepcion');
           this.agregarPuntoPositivoJugadora(3);
           break;
       }
@@ -89,26 +80,20 @@ export class SetComponent  implements OnInit {
       switch(tipo){
         case 'armado':
           this.agregarPuntoNegativoJugadora(1);
-          console.log('sumo armado');
           break;
         case 'bloqueo':
-          console.log('sumo bloqueo');
           this.agregarPuntoNegativoJugadora(5);
           break;
         case 'ataque':
-          console.log('sumo ataque');
           this.agregarPuntoNegativoJugadora(2);
            break;
         case 'defensa':
-          console.log('sumo defensa');
           this.agregarPuntoNegativoJugadora(4);
           break;
         case 'saque':
-          console.log('sumo saque');
           this.agregarPuntoNegativoJugadora(0);
           break;
        default:
-          console.log('sumo recepcion');
           this.agregarPuntoNegativoJugadora(3);
           break;
       }
@@ -117,18 +102,18 @@ export class SetComponent  implements OnInit {
 
   agregarPuntoPositivoJugadora(indicePositiveArray: number) {
     let i = 0;
-    while(this.statisticsPlayersArray[i].playerId != this.selectedPlayer.id){
+    while(this.staticsPlayersArray[i].playerId != this.selectedPlayer.id){
       i++;
     }
-    this.statisticsPlayersArray[i].statisticsPositiveList[indicePositiveArray]++;
+    this.staticsPlayersArray[i].statisticsPositiveList[indicePositiveArray]++;
   }
 
   agregarPuntoNegativoJugadora(indiceNegativeArray: number) {
     let i = 0;
-    while(this.statisticsPlayersArray[i].playerId != this.selectedPlayer.id){
+    while(this.staticsPlayersArray[i].playerId != this.selectedPlayer.id){
       i++;
     }
-    this.statisticsPlayersArray[i].statisticsNegativeList[indiceNegativeArray]++;
+    this.staticsPlayersArray[i].statisticsNegativeList[indiceNegativeArray]++;
   }
 
   getJugadorasPorId(playerIds: string[]){
@@ -150,21 +135,13 @@ export class SetComponent  implements OnInit {
   }
 
   async setFinalSet() {
-    // Mostrar el loading antes de ejecutar el proceso
-    const loading = await this.loadingController.create({
-      message: 'Finalizando set...',
-      spinner: 'crescent', // O cualquier otro tipo de spinner
-    });
-    this.isLoading = true;
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
     this.setGame.setFinish = true;
     this.setGame.pointsAgainst = this.pointsAgainst;
     this.setGame.pointsFavor = this.pointsFavor;
     this.setGame.players = this.players;
-
-    // Esperar a que finishSet termine y luego recargar la página
-    await loading.present();
-
-    this.firebaseSvc.finishSet(this.setGame, this.statisticsPlayersArray)
+    this.firebaseSvc.finishSet(this.setGame, this.staticsPlayersArray)
       .then(() => {
       // Establecer un timeout para recargar la página
       setTimeout(() => {
@@ -175,6 +152,5 @@ export class SetComponent  implements OnInit {
       console.error('Error finalizando el set: ', error);
       loading.dismiss(); // Ocultar el loading también en caso de error
     });
-    this.isLoading = false;
   }
 }

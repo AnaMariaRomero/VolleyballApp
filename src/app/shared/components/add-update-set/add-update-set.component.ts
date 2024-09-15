@@ -27,7 +27,7 @@ export class AddUpdateSetComponent  implements OnInit {
   pointsFavor: number = 0;
   pointsAgainst: number = 0;
   players!: Player[];
-  statisticsPlayersArray: Statistics[] = [];
+  staticsPlayersArray: Statistics[] = [];
   jugadoraSeleccionada: boolean = false;
   selectedPlayer!: Player;
   isLoading: boolean;
@@ -37,12 +37,12 @@ export class AddUpdateSetComponent  implements OnInit {
 
   ngOnInit() {
     this.getJugadorasPorId(this.playersSet);
-    this.createStaticsticsPlayersArray(this.playersSet);
+    this.createstaticsPlayersArray(this.playersSet);
   }
 
-  createStaticsticsPlayersArray(playersSetIds: string[]) {
+  createstaticsPlayersArray(playersSetIds: string[]) {
     //creo el array para almacenar los puntos de cada jugadora.
-    this.statisticsPlayersArray = playersSetIds.map(item => ({
+    this.staticsPlayersArray = playersSetIds.map(item => ({
       playerId: item,
       matchId: this.matchId,
       setId: this.setId,
@@ -62,26 +62,20 @@ export class AddUpdateSetComponent  implements OnInit {
       switch(tipo){
         case 'armado':
           this.agregarPuntoPositivoJugadora(1);
-          console.log('sumo armado');
           break;
         case 'bloqueo':
-          console.log('sumo bloqueo');
           this.agregarPuntoPositivoJugadora(5);
           break;
         case 'ataque':
-          console.log('sumo ataque');
           this.agregarPuntoPositivoJugadora(2);
            break;
         case 'defensa':
-          console.log('sumo defensa');
           this.agregarPuntoPositivoJugadora(4);
           break;
         case 'saque':
-          console.log('sumo saque');
           this.agregarPuntoPositivoJugadora(0);
           break;
        default:
-          console.log('sumo recepcion');
           this.agregarPuntoPositivoJugadora(3);
           break;
       }
@@ -89,26 +83,20 @@ export class AddUpdateSetComponent  implements OnInit {
       switch(tipo){
         case 'armado':
           this.agregarPuntoNegativoJugadora(1);
-          console.log('sumo armado');
           break;
         case 'bloqueo':
-          console.log('sumo bloqueo');
           this.agregarPuntoNegativoJugadora(5);
           break;
         case 'ataque':
-          console.log('sumo ataque');
           this.agregarPuntoNegativoJugadora(2);
            break;
         case 'defensa':
-          console.log('sumo defensa');
           this.agregarPuntoNegativoJugadora(4);
           break;
         case 'saque':
-          console.log('sumo saque');
           this.agregarPuntoNegativoJugadora(0);
           break;
        default:
-          console.log('sumo recepcion');
           this.agregarPuntoNegativoJugadora(3);
           break;
       }
@@ -117,18 +105,18 @@ export class AddUpdateSetComponent  implements OnInit {
 
   agregarPuntoPositivoJugadora(indicePositiveArray: number) {
     let i = 0;
-    while(this.statisticsPlayersArray[i].playerId != this.selectedPlayer.id){
+    while(this.staticsPlayersArray[i].playerId != this.selectedPlayer.id){
       i++;
     }
-    this.statisticsPlayersArray[i].statisticsPositiveList[indicePositiveArray]++;
+    this.staticsPlayersArray[i].statisticsPositiveList[indicePositiveArray]++;
   }
 
   agregarPuntoNegativoJugadora(indiceNegativeArray: number) {
     let i = 0;
-    while(this.statisticsPlayersArray[i].playerId != this.selectedPlayer.id){
+    while(this.staticsPlayersArray[i].playerId != this.selectedPlayer.id){
       i++;
     }
-    this.statisticsPlayersArray[i].statisticsNegativeList[indiceNegativeArray]++;
+    this.staticsPlayersArray[i].statisticsNegativeList[indiceNegativeArray]++;
   }
 
   getJugadorasPorId(playerIds: string[]){
@@ -161,8 +149,8 @@ export class AddUpdateSetComponent  implements OnInit {
   
     // Esperar a que finishSet termine y luego recargar la página
     
-    this.isLoading = true;console.log("rhisloa", this.isLoading)
-    this.firebaseSvc.finishSet(this.setGame, this.statisticsPlayersArray)
+    this.isLoading = true;
+    this.firebaseSvc.finishSet(this.setGame, this.staticsPlayersArray)
       .then(() => {
         
         setTimeout(() => {

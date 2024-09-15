@@ -30,12 +30,9 @@ export class GraphicsComponent  implements OnInit {
   verGrafica: boolean = false;
 
   ngOnInit() {
-    console.log(this.statistics.matchId, this.statistics.statisticsNegativeList)
     this.getMatchSetInformation(this.statistics.matchId, this.statistics.setId).then((result) => {
       this.nameMatch = result.nombrePartido;
       this.numberSet = result.setPartido;});
-
-    console.log(this.nameMatch, this.numberSet)
   }
 
   async getMatchSetInformation(matchId: string, setId: string) {
