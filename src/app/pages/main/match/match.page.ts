@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Match } from 'src/app/models/match.model';
 import { Player } from 'src/app/models/player.model';
 import { SetGame } from 'src/app/models/set-game.model';
+import { Statistics } from 'src/app/models/statistics.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { AddUpdateSetComponent } from 'src/app/shared/components/add-update-set/add-update-set.component';
@@ -33,6 +34,9 @@ export class MatchPage implements OnInit {
   setSeleccionado: boolean = false;
   llamarSet: boolean = false;
   setGame: SetGame;
+  statisticToShow: Statistics;
+  mostrarEstadistica: boolean = false;
+  lastPlayerId: string;
 
   constructor( private route: ActivatedRoute) { }
 
@@ -86,6 +90,23 @@ export class MatchPage implements OnInit {
   addSet(){
     this.llamarSet = true;
     this.findSet();
+  }
+
+  obtenerEstadisticaActual(statistics: Statistics[], playerId: string){
+
+    if (playerId != this.lastPlayerId){
+      this.mostrarEstadistica = true;
+      this.statisticToShow = null;
+      this.lastPlayerId = playerId;
+      const statistic = statistics.find(obj => obj.matchId === this.partidoId);
+      if (statistic) {
+        this.statisticToShow = statistic;
+      }
+    } else {
+      this.mostrarEstadistica = false;
+      this.statisticToShow = null;
+
+    }
   }
 
   findSet(){

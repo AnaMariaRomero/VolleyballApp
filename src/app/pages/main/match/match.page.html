@@ -44,7 +44,14 @@
     </div>
 
     <ion-card *ngIf="finSet">
-        Set terminado.
-        En otra version se mostrará la estadística.
+        <div *ngFor="let player of players"> 
+            <ion-button color="buttonEndColor" (click)="obtenerEstadisticaActual(player.staticsPlayer, player.id)" shape="round">
+                {{player.name}} {{player.numberPlayer}}
+            </ion-button>
+        </div>
+
+        <div *ngIf="mostrarEstadistica">
+            <app-graphics [statistics]="statisticToShow"></app-graphics>
+        </div>
     </ion-card>
 </ion-content>
