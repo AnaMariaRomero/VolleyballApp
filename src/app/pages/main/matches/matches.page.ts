@@ -20,10 +20,18 @@ export class MatchesPage implements OnInit {
     this.getMatches();
   }
 
+  // Función para convertir 'dd/mm/yyyy' a objeto Date
+  parseDate(dateString) {
+    const [day, month, year] = dateString.split('/').map(Number);
+    return new Date(year, month - 1, day); // Restamos 1 al mes porque en JavaScript los meses son 0-indexed
+  }
+
   getMatches(){
     const sub = this.firebaseSvc.getMatches().subscribe({
       next: (res: any) => {
         this.matches = res;
+        // Ordenar por fecha (de más reciente a más antiguo)
+        this.matches.sort((a, b) => this.parseDate(b.date).getTime() - this.parseDate(a.date).getTime());
         sub.unsubscribe();
       }
     });
