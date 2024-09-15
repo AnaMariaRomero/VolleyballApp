@@ -1,6 +1,6 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { Route, Router } from '@angular/router';
-import { indexedDBLocalPersistence } from 'firebase/auth';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
 import { Player } from 'src/app/models/player.model';
 import { SetGame } from 'src/app/models/set-game.model';
 import { Statistics } from 'src/app/models/statistics.model';
@@ -8,32 +8,29 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
-  selector: 'app-add-update-set',
-  templateUrl: './add-update-set.component.html',
-  styleUrls: ['./add-update-set.component.scss'],
+  selector: 'app-set',
+  templateUrl: './set.component.html',
+  styleUrls: ['./set.component.scss'],
 })
-
-export class AddUpdateSetComponent  implements OnInit {
+export class SetComponent  implements OnInit {
 
   @Input() numberSet: number;
   @Input() playersSet: string[];
-  @Input() setId: string;
   @Input() matchId: string;
+  @Input() setGame: SetGame;
 
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
 
-  setGame: SetGame = {} as SetGame;
   pointsFavor: number = 0;
   pointsAgainst: number = 0;
   players!: Player[];
   staticsPlayersArray: Statistics[] = [];
   jugadoraSeleccionada: boolean = false;
   selectedPlayer!: Player;
-  isLoading: boolean;
 
   
-  constructor(private router: Router) { }
+  constructor() { }
 
   ngOnInit() {
     this.getJugadorasPorId(this.playersSet);
@@ -45,7 +42,7 @@ export class AddUpdateSetComponent  implements OnInit {
     this.staticsPlayersArray = playersSetIds.map(item => ({
       playerId: item,
       matchId: this.matchId,
-      setId: this.setId,
+      setId: this.setGame.id,
       statisticsPositiveList: [0,0,0,0,0,0],
       statisticsNegativeList: [0,0,0,0,0,0]
     }))
@@ -137,32 +134,23 @@ export class AddUpdateSetComponent  implements OnInit {
     this.pointsAgainst++;
   }
 
-  setFinalSet() {
+  async setFinalSet() {
+    const loading = await this.utilsSvc.loading();
+    await loading.present();
     this.setGame.setFinish = true;
     this.setGame.pointsAgainst = this.pointsAgainst;
     this.setGame.pointsFavor = this.pointsFavor;
-    this.setGame.id = this.setId;
-    this.setGame.matchId = this.matchId;
     this.setGame.players = this.players;
-  
-    
-  
-    // Esperar a que finishSet termine y luego recargar la página
-    
-    this.isLoading = true;
     this.firebaseSvc.finishSet(this.setGame, this.staticsPlayersArray)
       .then(() => {
-        
-        setTimeout(() => {
-          
-        }, 2000);
-        this.isLoading = false;
-      })
-      .catch(error => {
-        console.error('Error finalizando el set: ', error);
-        // Manejo de errores aquí si es necesario
-      });
-      
-    this.utilsSvc.dismissModal({ success: true });
+      // Establecer un timeout para recargar la página
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    })
+    .catch(error => {
+      console.error('Error finalizando el set: ', error);
+      loading.dismiss(); // Ocultar el loading también en caso de error
+    });
   }
 }

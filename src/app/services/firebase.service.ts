@@ -12,7 +12,7 @@ import { Player } from '../models/player.model';
 import { Statistics } from '../models/statistics.model';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Position } from '../models/position.model';
-import { Observable, firstValueFrom, map } from 'rxjs';
+import { Observable, firstValueFrom, forkJoin, from, map } from 'rxjs';
 import { Match } from '../models/match.model';
 
 @Injectable({
@@ -83,7 +83,6 @@ export class FirebaseService {
     // ============ Agregar un documento ==============
     // se le pasa por parametro el path de lo que queremos agregar, en este caso es users
     addDocument(path:string, data: any){
-        console.log("DATOS: ", data)
         return addDoc(collection(getFirestore(), path), data);
     }
 
@@ -237,7 +236,6 @@ export class FirebaseService {
     updateSetGame(setGame:SetGame){
         const userUid = JSON.parse(localStorage.getItem('user')).uid;
         const path =  `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}`;
-
         this.updateDocument(path, setGame);
     }
 
@@ -257,7 +255,6 @@ export class FirebaseService {
         const sets = await firstValueFrom(existingSets);
     
         if (sets && sets.length > 0) {
-            console.log("Sets ya existentes: ", sets);
             return sets;
         }
     
@@ -276,39 +273,53 @@ export class FirebaseService {
         return newSets;
     }
      
-    finishSet(setGame:SetGame,statisticsPlayersArray: Statistics[]) {
-        const userUid = JSON.parse(localStorage.getItem('user')).uid;
-        //acá, agregar el statistic al jugador particular, lo tengo en playerId del mismo
-        const path =  `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}`;
-
-        statisticsPlayersArray.forEach(statistic => {
-            this.updatePlayerStatistic(statistic);
+    finishSet(setGame: SetGame, staticsPlayersArray: Statistics[]): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+          const userUid = JSON.parse(localStorage.getItem('user')).uid;
+          const path = `users/${userUid}/matches/${setGame.matchId}/sets/${setGame.id}`;
+      
+          // Promesas para las estadísticas de los jugadores
+          const statisticPromises = staticsPlayersArray.map(statistic => {
+            return this.updatePlayerStatistic(statistic);
+          });
+          // Esperar a que todas las estadísticas se actualicen
+          Promise.all(statisticPromises)
+            .then(() => {
+              // Actualizar el set
+              return this.updateSetGame(setGame);
+            })
+            .then(() => {
+              // Todo salió bien, resolver la promesa principal
+              resolve();
+            })
+            .catch(error => {
+              // Si hubo un error, rechazar la promesa
+              reject(error);
+            });
         });
-
-        // updetear el set: 
-        this.updateSetGame(setGame);
-      }
-
+      
+    }
+    
       //updeteo al jugador con su estadistica
-      async updatePlayerStatistic(statistics: Statistics){
-        const userUid = JSON.parse(localStorage.getItem('user')).uid;
+    async updatePlayerStatistic(statistics: Statistics){
+       const userUid = JSON.parse(localStorage.getItem('user')).uid;
 
         
-        // Obtener referencia al documento del jugador
-        const docRef = doc(getFirestore(), `users/${userUid}/players/${statistics.playerId}`);
-        const docSnap =  getDoc(docRef);
+       // Obtener referencia al documento del jugador
+       const docRef = doc(getFirestore(), `users/${userUid}/players/${statistics.playerId}`);
+       const docSnap =  getDoc(docRef);
 
-        // Usar `arrayUnion` para agregar la nueva estadística al array `estadística[]`
-        if ((await docSnap).exists()) {
-            // Usar `updateDoc` para agregar la nueva estadística al array `estadística[]`
-            updateDoc(docRef, {
-                'staticsPlayer': arrayUnion(statistics)
-            });
-            console.log('Estadística añadida exitosamente.');
-        } else {
-            console.error('No se encontró el jugador con el ID proporcionado.');
-        }
-      }
+       // Usar `arrayUnion` para agregar la nueva estadística al array `estadística[]`
+       if ((await docSnap).exists()) {
+           // Usar `updateDoc` para agregar la nueva estadística al array `estadística[]`
+           updateDoc(docRef, {
+               'staticsPlayer': arrayUnion(statistics)
+           });
+           console.log('Estadística añadida exitosamente.');
+       } else {
+           console.error('No se encontró el jugador con el ID proporcionado.');
+       }
+    }
 
     getPlayer(playerId:string){
         const userUid = JSON.parse(localStorage.getItem('user')).uid;

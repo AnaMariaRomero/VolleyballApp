@@ -20,15 +20,19 @@ export class MatchPage implements OnInit {
   utilsSvc = inject(UtilsService);
   
   match: Match;
+  setId: string;
   partidoId: string;
   numberSet: number = 0;
-  isOpen:boolean = false;
   players: Player[];
   selectedPlayers: string[] = [];
+  selectedPlayersToShow: number[] = [];
   setsGames: SetGame[] = [];
   finPartido: boolean = false;
   finSet: boolean;
   isLoading = true;
+  setSeleccionado: boolean = false;
+  llamarSet: boolean = false;
+  setGame: SetGame;
 
   constructor( private route: ActivatedRoute) { }
 
@@ -49,6 +53,8 @@ export class MatchPage implements OnInit {
             // Volver a cargar los sets después de crearlos
             await this.getSetsGamePorMatchId(this.partidoId);
         }
+
+        this.setSeleccionado = false;
         this.isLoading = false;
     });
 }
@@ -56,7 +62,6 @@ export class MatchPage implements OnInit {
     const resultado = await this.firebaseSvc.getSetsGameByMatchId(partidoId);
     resultado.subscribe((sets: SetGame[]) => {
         this.setsGames = sets;
-        console.log("Sets obtenidos: ", this.setsGames);
     });
   }
 
@@ -64,8 +69,6 @@ export class MatchPage implements OnInit {
   getPartido(partidoId: string): Promise<void> {
     //otra forma de obtener datos con GetDocument
     return this.firebaseSvc.getMatch(partidoId).then((match: Match) => {
-      // guardamos al usuario localmente;
-      console.log("djksadj: ", match)
       this.match = match;
     });
   }
@@ -80,52 +83,39 @@ export class MatchPage implements OnInit {
     });
   }
 
-  async addUpdateSet(){
-    //acá ya creo el set en firebase, le envío el setId
-    console.log("acá abajp",this.setsGames);
-    //fijarme si me conviene más obtener solo el set o obtener el array de set, ver extensión.
-    const set = this.setsGames.find(obj => obj.number === this.numberSet);
-    if (set) {
-      // Si se encontró el set, abrir el modal
-      await this.utilsSvc.presentModal({
-          component: AddUpdateSetComponent,
-          cssClass: 'add-update-modal',
-          componentProps: {
-              numberSet: this.numberSet,
-              playersSet: this.selectedPlayers, 
-              setId: set.id,
-              matchId: this.partidoId
-          }
-      });
-    } else {
-        console.error('Set no encontrado.');
-    }
+  addSet(){
+    this.llamarSet = true;
+    this.findSet();
   }
 
-  prepararSet(){
-    if (this.numberSet != 0) {this.isOpen = !this.isOpen;};
+  findSet(){
+    const set = this.setsGames.find(obj => obj.number === this.numberSet);
+    if (set) {
+      this.setGame = set;
+    }
   }
 
   changeSet(numberSet: number){
     if (numberSet != this.numberSet) {
+      this.setSeleccionado = true;
       this.numberSet = numberSet;
       const set = this.setsGames.find(obj => obj.number === this.numberSet);
       this.finSet = set.setFinish
     }
-
   }
 
-  selectedPlayer(player: string) {
-    if (!this.selectedPlayers.includes(player)) {
-      this.selectedPlayers.push(player);
+  selectedPlayer(player: Player) {
+    if (!this.selectedPlayers.includes(player.id)) {
+      this.selectedPlayers.push(player.id);
+      this.selectedPlayersToShow.push(player.numberPlayer);
     } else {
-      this.selectedPlayers = this.selectedPlayers.filter(p => p !== player);
+      this.selectedPlayers = this.selectedPlayers.filter(p => p !== player.id);
+      this.selectedPlayersToShow = this.selectedPlayersToShow.filter(p => p !== player.numberPlayer);
     }
   }
 
   terminarPartido(){
     this.match.matchFinish = true;
-    
     window.location.reload();
   }
 

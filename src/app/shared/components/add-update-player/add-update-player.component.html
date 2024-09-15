@@ -11,8 +11,11 @@
       <ion-icon class="image-icon" *ngIf="!form.value.image" name="image-outline"></ion-icon>
       <br>
       <ion-button (click)="takePicture()" mode="ios" size="small" color="buttonColors" shape="round">
-        Tomar/seleccionar una foto
+        Tomar/seleccionar una foto <span class="required-field">*</span>
       </ion-button>
+      <div class="validators" *ngIf="form.get('image').invalid && form.get('image').touched">
+        <div *ngIf="form.controls.image.errors?.['required']"> La foto es requerida es requerido. </div>
+      </div>
       
       <!-- =============== NAME ===============--> 
       <!-- Esto es para pasarle al custim-inout los iconos-->

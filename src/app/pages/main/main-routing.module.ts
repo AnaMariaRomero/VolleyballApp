@@ -33,7 +33,6 @@ const routes: Routes = [
     loadChildren: () => import('./player/player.module').then( m => m.PlayerPageModule)
   },
 
-
 ];
 
 @NgModule({
